@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Solana Arbitrage Simulation Platform - Real-time DEX arbitrage opportunities across Raydium, Orca, and Lifinity" />
+    <meta name="keywords" content="Solana, arbitrage, DEX, trading, cryptocurrency, DeFi, Raydium, Orca, Lifinity" />
+    <meta name="author" content="Solana Arbitrage Platform" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="/" />
+    <meta property="og:title" content="Solana Arbitrage Simulation Platform" />
+    <meta property="og:description" content="Real-time DEX arbitrage opportunities across Raydium, Orca, and Lifinity" />
+    <meta property="og:image" content="/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="/" />
+    <meta property="twitter:title" content="Solana Arbitrage Simulation Platform" />
+    <meta property="twitter:description" content="Real-time DEX arbitrage opportunities across Raydium, Orca, and Lifinity" />
+    <meta property="twitter:image" content="/og-image.png" />
+
+    <!-- Preconnect to external resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Chart.js CDN for fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.min.js" defer></script>
+    
+    <title>Solana Arbitrage Platform</title>
+    
+    <style>
+        /* Critical CSS for initial load */
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-logo {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #9333ea 0%, #fb923c 50%, #14b8a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #9333ea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        .loading-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #root {
+            min-height: 100vh;
+        }
+        
+        /* Hide loading screen once React loads */
+        .app-loaded .loading-screen {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <noscript>
+        <div style="padding: 2rem; text-align: center; background: #1a1a1a; color: #ffffff;">
+            <h2>JavaScript Required</h2>
+            <p>This application requires JavaScript to run. Please enable JavaScript in your browser and refresh the page.</p>
+        </div>
+    </noscript>
+    
+    <!-- Loading screen -->
+    <div class="loading-screen">
+        <div class="loading-logo">⚡ Solana Arbitrage</div>
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Initializing trading platform...</div>
+    </div>
+    
+    <!-- React app container -->
+    <div id="root"></div>
+    
+    <!-- React and ReactDOM from CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel Standalone for JSX transformation in development -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- TypeScript compiler (for development) -->
+    <script src="https://unpkg.com/typescript@5.0.0/lib/typescript.js"></script>
+    
+    <!-- Load our app -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        // Simple demo component to show the platform is working
+        function ArbitrageDemo() {
+            const [opportunities, setOpportunities] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+            const [modalOpen, setModalOpen] = useState(false);
+            const [priceHistory, setPriceHistory] = useState([]);
+            const [simulationAmount, setSimulationAmount] = useState(1000);
+            
+            useEffect(() => {
+                // Fetch opportunities from our Flask backend
+                fetch('/api/arbitrage/opportunities')
+                    .then(res => res.json())
+                    .then(data => {
+                        setOpportunities(data.opportunities || []);
+                        setLoading(false);
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        setLoading(false);
+                    });
+                
+                // Update every 3 seconds
+                const interval = setInterval(() => {
+                    fetch('/api/arbitrage/opportunities')
+                        .then(res => res.json())
+                        .then(data => setOpportunities(data.opportunities || []))
+                        .catch(console.error);
+                }, 3000);
+                
+                return () => clearInterval(interval);
+            }, []);
+            
+            const openModal = (opportunity) => {
+                console.log('Opening modal for:', opportunity);
+                setSelectedOpportunity(opportunity);
+                setModalOpen(true);
+                
+                // Fetch price history for this pair
+                fetch(`/api/price-history/${opportunity.pair.replace('/', '-')}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('Price history loaded:', data);
+                        setPriceHistory(data.history || []);
+                    })
+                    .catch(console.error);
+            };
+            
+            const closeModal = () => {
+                setModalOpen(false);
+                setSelectedOpportunity(null);
+                setPriceHistory([]);
+            };
+            
+            const calculateSimulation = () => {
+                if (!selectedOpportunity) return { profit: 0, fees: 0, net: 0 };
+                
+                const profit = (simulationAmount * selectedOpportunity.spread) / 100;
+                const fees = simulationAmount * 0.006; // 0.6% total fees
+                const gas = simulationAmount * 0.01; // 1% gas estimate
+                const net = profit - fees - gas;
+                
+                return { profit, fees: fees + gas, net };
+            };
+            
+            if (loading) {
+                return React.createElement('div', { className: 'loading-screen' },
+                    React.createElement('div', { className: 'loading-logo' }, '⚡ Solana Arbitrage'),
+                    React.createElement('div', { className: 'loading-spinner' }),
+                    React.createElement('div', { className: 'loading-text' }, 'Loading opportunities...')
+                );
+            }
+            
+            return React.createElement('div', { style: { padding: '2rem', background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)', minHeight: '100vh', color: 'white' } },
+                React.createElement('h1', { 
+                    style: { 
+                        background: 'linear-gradient(135deg, #9333ea 0%, #fb923c 50%, #14b8a6 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        fontSize: '2rem',
+                        marginBottom: '2rem',
+                        textAlign: 'center'
+                    }
+                }, '⚡ Solana Arbitrage Platform'),
+                React.createElement('div', { style: { textAlign: 'center', marginBottom: '2rem' } },
+                    React.createElement('p', { style: { fontSize: '1.1rem', color: 'rgba(255,255,255,0.8)' } },
+                        `Found ${opportunities.length} active arbitrage opportunities`
+                    )
+                ),
+                React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1rem' } },
+                    opportunities.map(opp => 
+                        React.createElement('div', {
+                            key: opp.id,
+                            onClick: () => openModal(opp),
+                            style: {
+                                background: 'rgba(255,255,255,0.05)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                borderRadius: '12px',
+                                padding: '1.5rem',
+                                backdropFilter: 'blur(20px)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                transform: 'scale(1)'
+                            },
+                            onMouseEnter: (e) => {
+                                e.target.style.transform = 'scale(1.02)';
+                                e.target.style.background = 'rgba(255,255,255,0.08)';
+                            },
+                            onMouseLeave: (e) => {
+                                e.target.style.transform = 'scale(1)';
+                                e.target.style.background = 'rgba(255,255,255,0.05)';
+                            }
+                        },
+                            React.createElement('h3', { style: { color: '#9333ea', marginBottom: '1rem' } }, opp.pair),
+                            React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' } },
+                                React.createElement('span', null, 'Buy on:'),
+                                React.createElement('strong', { style: { color: '#9333ea' } }, opp.buyDex)
+                            ),
+                            React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' } },
+                                React.createElement('span', null, 'Sell on:'),
+                                React.createElement('strong', { style: { color: '#14b8a6' } }, opp.sellDex)
+                            ),
+                            React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' } },
+                                React.createElement('span', null, 'Spread:'),
+                                React.createElement('strong', { style: { color: '#10b981' } }, opp.spread.toFixed(2) + '%')
+                            ),
+                            React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' } },
+                                React.createElement('span', null, 'Net Profit:'),
+                                React.createElement('strong', { 
+                                    style: { color: opp.netProfit > 0 ? '#10b981' : '#ef4444' } 
+                                }, opp.netProfit.toFixed(2) + '%')
+                            ),
+                            React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' } },
+                                React.createElement('span', null, 'Confidence:'),
+                                React.createElement('strong', { style: { color: '#fb923c' } }, opp.confidence.toFixed(0) + '%')
+                            ),
+                            React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' } },
+                                React.createElement('span', null, 'Data Source:'),
+                                React.createElement('span', { 
+                                    style: { 
+                                        color: opp.dataSource === 'jupiter' ? '#10b981' : 
+                                               opp.dataSource === 'coingecko' ? '#3b82f6' : '#fb923c',
+                                        fontWeight: 'bold',
+                                        textTransform: 'uppercase',
+                                        fontSize: '0.75rem'
+                                    }
+                                }, opp.dataSource || 'Unknown')
+                            )
+                        )
+                    )
+                ),
+                opportunities.length === 0 && React.createElement('div', { 
+                    style: { 
+                        textAlign: 'center', 
+                        padding: '3rem',
+                        color: 'rgba(255,255,255,0.6)'
+                    }
+                },
+                    React.createElement('h3', null, 'No opportunities found'),
+                    React.createElement('p', null, 'Market conditions are too efficient for arbitrage at the moment.')
+                ),
+                
+                // Modal for detailed view
+                modalOpen && React.createElement('div', {
+                    style: {
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'rgba(0,0,0,0.9)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 9999,
+                        padding: '1rem'
+                    },
+                    onClick: closeModal
+                },
+                    React.createElement('div', {
+                        style: {
+                            background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)',
+                            border: '2px solid rgba(147, 51, 234, 0.5)',
+                            borderRadius: '16px',
+                            padding: '2rem',
+                            maxWidth: '900px',
+                            width: '100%',
+                            maxHeight: '90vh',
+                            overflow: 'auto',
+                            position: 'relative',
+                            boxShadow: '0 20px 50px rgba(0,0,0,0.8)'
+                        },
+                        onClick: (e) => e.stopPropagation()
+                    },
+                        // Close button
+                        React.createElement('button', {
+                            onClick: closeModal,
+                            style: {
+                                position: 'absolute',
+                                top: '1rem',
+                                right: '1rem',
+                                background: 'rgba(239, 68, 68, 0.2)',
+                                border: '1px solid rgba(239, 68, 68, 0.5)',
+                                borderRadius: '8px',
+                                color: '#ef4444',
+                                padding: '0.5rem',
+                                cursor: 'pointer',
+                                fontSize: '1.2rem'
+                            }
+                        }, '×'),
+                        
+                        // Modal content
+                        selectedOpportunity && React.createElement('div', null,
+                            // Header
+                            React.createElement('h2', {
+                                style: {
+                                    background: 'linear-gradient(135deg, #9333ea 0%, #fb923c 50%, #14b8a6 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    margin: '0 0 2rem 0'
+                                }
+                            }, `${selectedOpportunity.pair} Arbitrage Analysis`),
+                            
+                            // Opportunity summary
+                            React.createElement('div', {
+                                style: {
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                    gap: '1rem',
+                                    marginBottom: '2rem'
+                                }
+                            },
+                                React.createElement('div', {
+                                    style: {
+                                        background: 'rgba(16, 185, 129, 0.1)',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(16, 185, 129, 0.3)'
+                                    }
+                                },
+                                    React.createElement('div', { style: { fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' } }, 'Profit Potential'),
+                                    React.createElement('div', { style: { fontSize: '1.5rem', fontWeight: 'bold', color: '#10b981' } }, 
+                                        selectedOpportunity.netProfit.toFixed(2) + '%'
+                                    )
+                                ),
+                                React.createElement('div', {
+                                    style: {
+                                        background: 'rgba(251, 146, 60, 0.1)',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(251, 146, 60, 0.3)'
+                                    }
+                                },
+                                    React.createElement('div', { style: { fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' } }, 'Confidence'),
+                                    React.createElement('div', { style: { fontSize: '1.5rem', fontWeight: 'bold', color: '#fb923c' } }, 
+                                        selectedOpportunity.confidence.toFixed(0) + '%'
+                                    )
+                                ),
+                                React.createElement('div', {
+                                    style: {
+                                        background: 'rgba(147, 51, 234, 0.1)',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(147, 51, 234, 0.3)'
+                                    }
+                                },
+                                    React.createElement('div', { style: { fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' } }, 'Spread'),
+                                    React.createElement('div', { style: { fontSize: '1.5rem', fontWeight: 'bold', color: '#9333ea' } }, 
+                                        selectedOpportunity.spread.toFixed(2) + '%'
+                                    )
+                                )
+                            ),
+                            
+                            // Route visualization
+                            React.createElement('div', { style: { marginBottom: '2rem' } },
+                                React.createElement('h3', { style: { color: '#14b8a6', marginBottom: '1rem' } }, 'Trading Route'),
+                                React.createElement('div', {
+                                    style: {
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        padding: '1rem',
+                                        background: 'rgba(255,255,255,0.05)',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(255,255,255,0.1)'
+                                    }
+                                },
+                                    React.createElement('div', {
+                                        style: {
+                                            padding: '1rem 2rem',
+                                            background: 'rgba(16, 185, 129, 0.2)',
+                                            borderRadius: '8px',
+                                            color: '#10b981',
+                                            fontWeight: 'bold'
+                                        }
+                                    }, `Buy on ${selectedOpportunity.buyDex}`),
+                                    React.createElement('div', {
+                                        style: {
+                                            margin: '0 2rem',
+                                            fontSize: '2rem',
+                                            color: '#9333ea'
+                                        }
+                                    }, '→'),
+                                    React.createElement('div', {
+                                        style: {
+                                            padding: '1rem 2rem',
+                                            background: 'rgba(251, 146, 60, 0.2)',
+                                            borderRadius: '8px',
+                                            color: '#fb923c',
+                                            fontWeight: 'bold'
+                                        }
+                                    }, `Sell on ${selectedOpportunity.sellDex}`)
+                                )
+                            ),
+                            
+                            // Trading simulation
+                            React.createElement('div', { style: { marginBottom: '2rem' } },
+                                React.createElement('h3', { style: { color: '#14b8a6', marginBottom: '1rem' } }, 'Trade Simulation'),
+                                React.createElement('div', {
+                                    style: {
+                                        background: 'rgba(255,255,255,0.05)',
+                                        padding: '1.5rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(255,255,255,0.1)'
+                                    }
+                                },
+                                    React.createElement('div', { style: { marginBottom: '1rem' } },
+                                        React.createElement('label', { style: { display: 'block', marginBottom: '0.5rem' } }, 'Investment Amount ($)'),
+                                        React.createElement('input', {
+                                            type: 'number',
+                                            value: simulationAmount,
+                                            onChange: (e) => setSimulationAmount(Number(e.target.value)),
+                                            style: {
+                                                width: '100%',
+                                                padding: '0.5rem',
+                                                background: 'rgba(255,255,255,0.1)',
+                                                border: '1px solid rgba(255,255,255,0.2)',
+                                                borderRadius: '4px',
+                                                color: 'white',
+                                                fontSize: '1rem'
+                                            }
+                                        })
+                                    ),
+                                    React.createElement('div', {
+                                        style: {
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                                            gap: '1rem',
+                                            marginTop: '1rem'
+                                        }
+                                    },
+                                        React.createElement('div', null,
+                                            React.createElement('div', { style: { fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' } }, 'Gross Profit'),
+                                            React.createElement('div', { style: { fontSize: '1.2rem', fontWeight: 'bold', color: '#10b981' } }, 
+                                                '$' + calculateSimulation().profit.toFixed(2)
+                                            )
+                                        ),
+                                        React.createElement('div', null,
+                                            React.createElement('div', { style: { fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' } }, 'Fees + Gas'),
+                                            React.createElement('div', { style: { fontSize: '1.2rem', fontWeight: 'bold', color: '#ef4444' } }, 
+                                                '$' + calculateSimulation().fees.toFixed(2)
+                                            )
+                                        ),
+                                        React.createElement('div', null,
+                                            React.createElement('div', { style: { fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' } }, 'Net Profit'),
+                                            React.createElement('div', { 
+                                                style: { 
+                                                    fontSize: '1.2rem', 
+                                                    fontWeight: 'bold', 
+                                                    color: calculateSimulation().net > 0 ? '#10b981' : '#ef4444'
+                                                } 
+                                            }, '$' + calculateSimulation().net.toFixed(2))
+                                        )
+                                    )
+                                )
+                            ),
+                            
+                            // Price history chart placeholder
+                            priceHistory.length > 0 && React.createElement('div', { style: { marginBottom: '2rem' } },
+                                React.createElement('h3', { style: { color: '#14b8a6', marginBottom: '1rem' } }, 'Price History'),
+                                React.createElement('div', {
+                                    style: {
+                                        background: 'rgba(255,255,255,0.05)',
+                                        padding: '1rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        textAlign: 'center'
+                                    }
+                                },
+                                    React.createElement('p', { style: { color: 'rgba(255,255,255,0.6)' } }, 
+                                        `Loaded ${priceHistory.length} price data points for ${selectedOpportunity.pair}`
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+        
+        // Render the app
+        ReactDOM.render(
+            React.createElement(ArbitrageDemo),
+            document.getElementById('root')
+        );
+        
+        // Hide loading screen
+        document.body.classList.add('app-loaded');
+    </script>
+    
+    <!-- Fallback script loading -->
+    <script>
+        // Fallback loading mechanism
+        setTimeout(() => {
+            if (!document.body.classList.contains('app-loaded')) {
+                // Try alternative loading method
+                const script = document.createElement('script');
+                script.type = 'module';
+                script.src = '/src/index.tsx';
+                document.head.appendChild(script);
+            }
+        }, 3000);
+        
+        // Performance monitoring
+        if ('performance' in window) {
+            window.addEventListener('load', () => {
+                const loadTime = performance.now();
+                console.log(`Application loaded in ${loadTime.toFixed(2)}ms`);
+            });
+        }
+        
+        // Service Worker registration (for PWA features)
+        if ('serviceWorker' in navigator && location.protocol === 'https:') {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => console.log('SW registered:', registration))
+                .catch(error => console.log('SW registration failed:', error));
+        }
+    </script>
+    
+    <!-- Analytics and error tracking placeholder -->
+    <script>
+        // Error tracking
+        window.addEventListener('error', (event) => {
+            console.error('Global error:', event.error);
+            // Send to error tracking service in production
+        });
+        
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            // Send to error tracking service in production
+        });
+        
+        // Basic analytics placeholder
+        if (typeof gtag !== 'undefined') {
+            gtag('config', 'GA_MEASUREMENT_ID');
+        }
+    </script>
+</body>
+</html>
