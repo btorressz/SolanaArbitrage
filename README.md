@@ -117,5 +117,9 @@ The platform includes intelligent rate limiting to prevent API abuse:
 - **Slippage Calculation**: Dynamic based on liquidity
 - **Gas Estimation**: Conservative 1-2% estimates
 - **Profit Margins**: Net calculations after all fees
+
+  ## 📄 License
+
+This project is licensed under the MIT License
 - **Lucide React** for consistent iconography
 - **Custom Solana gradient styling**
