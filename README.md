@@ -137,4 +137,8 @@ This platform is for research purposes. Cryptocurrency trading involves substant
 - [CoinGecko](https://www.coingecko.com/) - Backup price data
 - [Solana Agent Kit](https://github.com/sendaifun/solana-agent-kit) - On-chain integration
 - [Solana](https://solana.com/) - Blockchain platform
+  
+
+##  📸 Screenshots  
+
 
