@@ -15,3 +15,22 @@ A real-time arbitrage opportunity detection and visualization platform for Solan
 - **Continuous Updates** - Real-time opportunity streaming every 3 seconds (app never pauses)
 - **Profit Analysis** - Detailed calculations including slippage, gas costs, and confidence metrics
 - **Data Source Transparency** - Clear indicators showing which API provided each opportunity
+
+
+## 🎯 Supported Trading Pairs
+
+- SOL/USDC
+- RAY/USDC
+- ORCA/USDC
+- BONK/USDC
+- JUP/USDC
+
+## 🏗️ Architecture
+
+### Backend (Flask + Python)
+- **Flask REST API** serving arbitrage opportunities
+- **Jupiter API Integration** for real-time DEX quotes
+- **CoinGecko Backup** for price data redundancy
+- **Intelligent Rate Limiting** (10 calls/min Jupiter, 15 calls/min CoinGecko)
+- **WebSocket Server** for real-time updates
+- **Solana Agent Kit v2.0.9** for on-chain interactions
