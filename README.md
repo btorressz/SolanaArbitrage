@@ -41,5 +41,16 @@ A real-time arbitrage opportunity detection and visualization platform for Solan
 - **React 19** with modern hooks and TypeScript
 - **Vite** for fast development and optimized builds
 - **Recharts** for data visualization
+
+  ## 📊 API Endpoints
+
+### REST API
+
+- `GET /api/arbitrage/opportunities` - Get current arbitrage opportunities
+- `GET /api/price-history/<pair>` - Get price history for specific trading pair
+- `GET /api/quotes` - Get cached DEX quotes
+- `POST /api/simulate/trade` - Simulate trade execution with custom parameters
+- `GET /health` - Health check with data source status
+
 - **Lucide React** for consistent iconography
 - **Custom Solana gradient styling**
