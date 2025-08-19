@@ -41,6 +41,9 @@ A real-time arbitrage opportunity detection and visualization platform for Solan
 - **React 19** with modern hooks and TypeScript
 - **Vite** for fast development and optimized builds
 - **Recharts** for data visualization
+-  **Lucide React** for consistent iconography
+- **Custom Solana gradient styling**
+
 
   ## 📊 API Endpoints
 
@@ -126,5 +129,3 @@ This project is licensed under the MIT License
 ## ⚠️ Disclaimer
 
 This platform is for research purposes. Cryptocurrency trading involves substantial risk. Always do your own research and never invest more than you can afford to lose
-- **Lucide React** for consistent iconography
-- **Custom Solana gradient styling**
