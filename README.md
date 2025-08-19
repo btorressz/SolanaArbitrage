@@ -52,5 +52,40 @@ A real-time arbitrage opportunity detection and visualization platform for Solan
 - `POST /api/simulate/trade` - Simulate trade execution with custom parameters
 - `GET /health` - Health check with data source status
 
+### Rate Limiting Configuration
+
+The platform includes intelligent rate limiting to prevent API abuse:
+
+- **Jupiter API**: 10 calls per minute
+- **CoinGecko API**: 15 calls per minute
+- **Retry Logic**: Exponential backoff (1s, 2s, 4s delays)
+- **Update Interval**: 10 seconds between quote refreshes
+
+## 🎨 UI Features
+
+### Main Dashboard
+- **Clickable Opportunity Cards** with hover effects showing:
+  - Trading pair (e.g., SOL/USDC)
+  - Buy/Sell DEX information
+  - Price spread percentage
+  - Net profit after fees
+  - Confidence score
+  - Data source indicator
+- **Auto-refreshing** every 3 seconds (continues even when viewing modals)
+- **Responsive design** for mobile and desktop
+- **Error handling** with user-friendly messages
+
+### Interactive Modal Analysis
+- **Detailed Opportunity Analysis** opened by clicking any card:
+  - Comprehensive profit/loss breakdown
+  - Trading route visualization with DEX flow
+  - Interactive trading simulator with adjustable amounts
+  - Real-time gross profit, fees, and net profit calculations
+  - Price history charts with 20 data points
+  - Close button and click-outside-to-close functionality
+- **Non-blocking Interface** - opportunities continue updating while modal is open
+- **Price History Integration** - Live data from both Jupiter and CoinGecko APIs
+
+
 - **Lucide React** for consistent iconography
 - **Custom Solana gradient styling**
