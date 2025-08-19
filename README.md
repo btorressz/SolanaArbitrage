@@ -34,3 +34,12 @@ A real-time arbitrage opportunity detection and visualization platform for Solan
 - **Intelligent Rate Limiting** (10 calls/min Jupiter, 15 calls/min CoinGecko)
 - **WebSocket Server** for real-time updates
 - **Solana Agent Kit v2.0.9** for on-chain interactions
+
+
+
+### Frontend (React + TypeScript)
+- **React 19** with modern hooks and TypeScript
+- **Vite** for fast development and optimized builds
+- **Recharts** for data visualization
+- **Lucide React** for consistent iconography
+- **Custom Solana gradient styling**
