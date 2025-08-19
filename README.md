@@ -121,5 +121,10 @@ The platform includes intelligent rate limiting to prevent API abuse:
   ## 📄 License
 
 This project is licensed under the MIT License
+
+
+## ⚠️ Disclaimer
+
+This platform is for research purposes. Cryptocurrency trading involves substantial risk. Always do your own research and never invest more than you can afford to lose
 - **Lucide React** for consistent iconography
 - **Custom Solana gradient styling**
