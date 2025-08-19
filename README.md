@@ -87,5 +87,20 @@ The platform includes intelligent rate limiting to prevent API abuse:
 - **Price History Integration** - Live data from both Jupiter and CoinGecko APIs
 
 
+## 🔍 How It Works
+
+1. **Data Collection**: Platform fetches real-time quotes from Jupiter API for all supported trading pairs
+2. **Backup System**: If Jupiter hits rate limits, CoinGecko API provides price data
+3. **Opportunity Detection**: Algorithm compares prices across DEXs to identify arbitrage opportunities
+4. **Profit Calculation**: Factors in slippage, gas costs, and trading fees
+5. **Confidence Scoring**: Rates opportunities based on liquidity and profit margins
+6. **Real-Time Updates**: WebSocket streams updates to connected clients
+
+## 🛡️ Security & Best Practices
+
+- **No Private Key Exposure**: Read-only operations by default
+- **Rate Limiting**: Respects API limits to prevent blocking
+- **Error Handling**: Graceful degradation when APIs are unavailable
+- **CORS Protection**: Configured for secure cross-origin requests
 - **Lucide React** for consistent iconography
 - **Custom Solana gradient styling**
