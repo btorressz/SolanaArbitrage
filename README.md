@@ -129,3 +129,12 @@ This project is licensed under the MIT License
 ## ⚠️ Disclaimer
 
 This platform is for research purposes. Cryptocurrency trading involves substantial risk. Always do your own research and never invest more than you can afford to lose
+
+
+## 🔗 Links
+
+- [Jupiter DEX](https://jup.ag/) - Primary data source
+- [CoinGecko](https://www.coingecko.com/) - Backup price data
+- [Solana Agent Kit](https://github.com/sendaifun/solana-agent-kit) - On-chain integration
+- [Solana](https://solana.com/) - Blockchain platform
+
