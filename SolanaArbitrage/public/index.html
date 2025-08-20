@@ -508,20 +508,193 @@
                                 )
                             ),
                             
-                            // Price history chart placeholder
-                            priceHistory.length > 0 && React.createElement('div', { style: { marginBottom: '2rem' } },
-                                React.createElement('h3', { style: { color: '#14b8a6', marginBottom: '1rem' } }, 'Price History'),
+                            // Price history and buy/sell charts
+                            React.createElement('div', { style: { marginBottom: '2rem' } },
+                                React.createElement('h3', { style: { color: '#14b8a6', marginBottom: '1rem' } }, 'Live Price Charts'),
+                                
+                                // Price History Chart
+                                priceHistory.length > 0 && React.createElement('div', {
+                                    style: {
+                                        background: 'rgba(255,255,255,0.05)',
+                                        padding: '1.5rem',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        marginBottom: '1rem'
+                                    }
+                                },
+                                    React.createElement('h4', { 
+                                        style: { 
+                                            color: '#9333ea', 
+                                            marginBottom: '1rem', 
+                                            fontSize: '1rem' 
+                                        } 
+                                    }, `${selectedOpportunity.pair} Price History (${priceHistory.length} points)`),
+                                    
+                                    // Simple bar chart using CSS
+                                    React.createElement('div', {
+                                        style: {
+                                            display: 'flex',
+                                            alignItems: 'end',
+                                            height: '100px',
+                                            gap: '2px',
+                                            background: 'rgba(0,0,0,0.2)',
+                                            padding: '10px',
+                                            borderRadius: '4px',
+                                            overflow: 'hidden'
+                                        }
+                                    },
+                                        priceHistory.map((price, index) => {
+                                            const maxPrice = Math.max(...priceHistory);
+                                            const minPrice = Math.min(...priceHistory);
+                                            const normalizedHeight = ((price - minPrice) / (maxPrice - minPrice)) * 80 + 10;
+                                            const isRecent = index >= priceHistory.length - 3;
+                                            
+                                            return React.createElement('div', {
+                                                key: index,
+                                                style: {
+                                                    flex: 1,
+                                                    height: normalizedHeight + 'px',
+                                                    background: isRecent 
+                                                        ? 'linear-gradient(to top, #10b981, #14b8a6)' 
+                                                        : 'linear-gradient(to top, #6366f1, #8b5cf6)',
+                                                    borderRadius: '2px 2px 0 0',
+                                                    transition: 'all 0.3s ease',
+                                                    border: '1px solid rgba(255,255,255,0.1)'
+                                                },
+                                                title: `Point ${index + 1}: ${price.toFixed(6)}`
+                                            })
+                                        })
+                                    ),
+                                    
+                                    // Price range info
+                                    React.createElement('div', {
+                                        style: {
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            marginTop: '0.5rem',
+                                            fontSize: '0.8rem',
+                                            color: 'rgba(255,255,255,0.6)'
+                                        }
+                                    },
+                                        React.createElement('span', null, `Min: ${Math.min(...priceHistory).toFixed(6)}`),
+                                        React.createElement('span', null, `Latest: ${priceHistory[priceHistory.length - 1]?.toFixed(6) || 'N/A'}`),
+                                        React.createElement('span', null, `Max: ${Math.max(...priceHistory).toFixed(6)}`)
+                                    )
+                                ),
+                                
+                                // Live Buy/Sell Price Comparison
                                 React.createElement('div', {
                                     style: {
                                         background: 'rgba(255,255,255,0.05)',
-                                        padding: '1rem',
+                                        padding: '1.5rem',
                                         borderRadius: '8px',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        textAlign: 'center'
+                                        border: '1px solid rgba(255,255,255,0.1)'
                                     }
                                 },
-                                    React.createElement('p', { style: { color: 'rgba(255,255,255,0.6)' } }, 
-                                        `Loaded ${priceHistory.length} price data points for ${selectedOpportunity.pair}`
+                                    React.createElement('h4', { 
+                                        style: { 
+                                            color: '#fb923c', 
+                                            marginBottom: '1rem', 
+                                            fontSize: '1rem' 
+                                        } 
+                                    }, 'Current Buy vs Sell Prices'),
+                                    
+                                    React.createElement('div', {
+                                        style: {
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 1fr',
+                                            gap: '1rem'
+                                        }
+                                    },
+                                        // Buy Price Bar
+                                        React.createElement('div', {
+                                            style: {
+                                                background: 'rgba(16, 185, 129, 0.1)',
+                                                padding: '1rem',
+                                                borderRadius: '8px',
+                                                border: '2px solid rgba(16, 185, 129, 0.3)',
+                                                position: 'relative'
+                                            }
+                                        },
+                                            React.createElement('div', { 
+                                                style: { 
+                                                    fontSize: '0.9rem', 
+                                                    color: '#10b981', 
+                                                    fontWeight: 'bold',
+                                                    marginBottom: '0.5rem'
+                                                } 
+                                            }, `BUY on ${selectedOpportunity.buyDex}`),
+                                            React.createElement('div', { 
+                                                style: { 
+                                                    fontSize: '1.2rem', 
+                                                    fontWeight: 'bold', 
+                                                    color: '#10b981' 
+                                                } 
+                                            }, `$${selectedOpportunity.buyPrice.toFixed(6)}`),
+                                            React.createElement('div', {
+                                                style: {
+                                                    height: '4px',
+                                                    background: 'linear-gradient(to right, #10b981, #14b8a6)',
+                                                    borderRadius: '2px',
+                                                    marginTop: '0.5rem'
+                                                }
+                                            })
+                                        ),
+                                        
+                                        // Sell Price Bar
+                                        React.createElement('div', {
+                                            style: {
+                                                background: 'rgba(251, 146, 60, 0.1)',
+                                                padding: '1rem',
+                                                borderRadius: '8px',
+                                                border: '2px solid rgba(251, 146, 60, 0.3)',
+                                                position: 'relative'
+                                            }
+                                        },
+                                            React.createElement('div', { 
+                                                style: { 
+                                                    fontSize: '0.9rem', 
+                                                    color: '#fb923c', 
+                                                    fontWeight: 'bold',
+                                                    marginBottom: '0.5rem'
+                                                } 
+                                            }, `SELL on ${selectedOpportunity.sellDex}`),
+                                            React.createElement('div', { 
+                                                style: { 
+                                                    fontSize: '1.2rem', 
+                                                    fontWeight: 'bold', 
+                                                    color: '#fb923c' 
+                                                } 
+                                            }, `$${selectedOpportunity.sellPrice.toFixed(6)}`),
+                                            React.createElement('div', {
+                                                style: {
+                                                    height: '4px',
+                                                    background: 'linear-gradient(to right, #fb923c, #f59e0b)',
+                                                    borderRadius: '2px',
+                                                    marginTop: '0.5rem'
+                                                }
+                                            })
+                                        )
+                                    ),
+                                    
+                                    // Price difference indicator
+                                    React.createElement('div', {
+                                        style: {
+                                            textAlign: 'center',
+                                            marginTop: '1rem',
+                                            padding: '0.5rem',
+                                            background: 'rgba(147, 51, 234, 0.1)',
+                                            borderRadius: '6px',
+                                            border: '1px solid rgba(147, 51, 234, 0.3)'
+                                        }
+                                    },
+                                        React.createElement('span', { 
+                                            style: { 
+                                                color: '#9333ea', 
+                                                fontWeight: 'bold',
+                                                fontSize: '0.9rem'
+                                            } 
+                                        }, `Price Difference: $${(selectedOpportunity.sellPrice - selectedOpportunity.buyPrice).toFixed(6)} (${selectedOpportunity.spread.toFixed(2)}%)`)
                                     )
                                 )
                             )
@@ -590,3 +763,4 @@
     </script>
 </body>
 </html>
+
