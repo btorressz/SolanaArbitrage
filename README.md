@@ -146,6 +146,9 @@ This platform is for research purposes. Cryptocurrency trading involves substant
 
 ![](https://github.com/btorressz/SolanaArbitrage/blob/main/SolanaArbitrage3.jpg?raw=true)
 
+![](https://github.com/btorressz/SolanaArbitrage/blob/main/SolanaArbitrage4.jpg?raw=true)
+
+
 
 
 
